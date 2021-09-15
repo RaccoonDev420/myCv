@@ -10,7 +10,6 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
 });
-
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.render(scene, camera);
@@ -44,7 +43,7 @@ orientation.position.set(40,50,20);
 
 const worldPosition = new THREE.Vector3();
 orientation.getWorldPosition( worldPosition );
-console.log(worldPosition);
+
 
 
 camera.position.set( 1,60,0 );
@@ -341,8 +340,47 @@ var jupiter_speed = earth_speed * 0.0933333;
 var saturn_speed = earth_speed * 0.0544827586;
 var uranus_speed = earth_speed * 0.03581454;
 //sun.rotation.x=6;
+
+function resizeRendererToDisplaySize(renderer) {
+    const canvas = renderer.domElement;
+	const pixelRatio = window.devicePixelRatio;
+    const width = canvas.clientWidth * pixelRatio | 0;
+    const height = canvas.clientHeight * pixelRatio | 0;
+    const needResize = canvas.width !== width || canvas.height !== height;
+    
+	if (needResize) {
+	  
+	  //canvas.width = width;
+	  //canvas.height = height;
+      renderer.setSize(width, height, false);
+	  
+    }
+	
+    return needResize;
+}
+
+window.addEventListener( 'resize', onWindowResize, false );
+
+function onWindowResize(){
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
+
 function animate() {
+	
 	requestAnimationFrame(animate);
+	//time *= 0.0001;
+	
+	if(resizeRendererToDisplaySize(renderer)){
+		const canvas = renderer.domElement;
+		camera.aspect = canvas.clientWidth / canvas.clientHeight;
+		camera.updateProjectionMatrix();
+		
+	}
 	
 	torus.rotation.x += 0.01;
 	torus.rotation.y += 0.005;
@@ -371,3 +409,4 @@ function animate() {
 }
 
 animate();
+
