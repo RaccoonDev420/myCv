@@ -341,23 +341,7 @@ var saturn_speed = earth_speed * 0.0544827586;
 var uranus_speed = earth_speed * 0.03581454;
 //sun.rotation.x=6;
 
-function resizeRendererToDisplaySize(renderer) {
-    const canvas = renderer.domElement;
-	const pixelRatio = window.devicePixelRatio;
-    const width = canvas.clientWidth * pixelRatio | 0;
-    const height = canvas.clientHeight * pixelRatio | 0;
-    const needResize = canvas.width !== width || canvas.height !== height;
-    
-	if (needResize) {
-	  
-	  //canvas.width = width;
-	  //canvas.height = height;
-      renderer.setSize(width, height, false);
-	  
-    }
-	
-    return needResize;
-}
+
 
 window.addEventListener( 'resize', onWindowResize, false );
 
@@ -375,12 +359,7 @@ function animate() {
 	requestAnimationFrame(animate);
 	//time *= 0.0001;
 	
-	if(resizeRendererToDisplaySize(renderer)){
-		const canvas = renderer.domElement;
-		camera.aspect = canvas.clientWidth / canvas.clientHeight;
-		camera.updateProjectionMatrix();
-		
-	}
+	
 	
 	torus.rotation.x += 0.01;
 	torus.rotation.y += 0.005;
