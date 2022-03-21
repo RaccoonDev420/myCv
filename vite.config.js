@@ -5,7 +5,7 @@ export default defineConfig({
 
     base: '/myCv/',
     build: {
-        chunkSizeWarningLimit: 2000,
+        chunkSizeWarningLimit: 1000,
         assetsInlineLimit: '2048',
         rollupOptions: {
             output: {
