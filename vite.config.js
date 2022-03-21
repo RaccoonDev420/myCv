@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 // https://vitejs.dev/config/
 export default defineConfig({
 
+    base: '/myCv/',
     build: {
         chunkSizeWarningLimit: 2000,
         assetsInlineLimit: '2048',
