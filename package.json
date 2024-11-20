@@ -8,7 +8,7 @@
     "start": "npm run dev"
   },
   "devDependencies": {
-    "vite": "^2.5.2"
+    "vite": "^2.9.15"
   },
   "dependencies": {
     "three": "^0.132.2"
