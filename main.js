@@ -30,7 +30,7 @@ import uranusMap from './img/uranusMap.jpg';
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-
+const clock = new THREE.Clock();
 
 const renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector('#bg'),
@@ -74,6 +74,48 @@ orientation.getWorldPosition(worldPosition);
 camera.position.set(1, 60, 0);
 camera.lookAt(worldPosition);
 camera.up.set(0, 1, 0);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; // Smooth control
+controls.dampingFactor = 0.1;
+controls.enablePan = false; // Disable panning if desired
+controls.maxPolarAngle = Math.PI / 2; // Limit vertical rotation
+controls.update();
+
+// Variables for WASD movement
+const movementSpeed = 2; // Adjust speed of movement
+const keysPressed = {};
+
+// Add event listeners for key controls
+document.addEventListener("keydown", (event) => {
+    keysPressed[event.key] = true;
+});
+
+document.addEventListener("keyup", (event) => {
+    keysPressed[event.key] = false;
+});
+
+// Update camera position based on keys pressed
+function updateCameraPosition(delta) {
+    const moveStep = movementSpeed * delta;
+
+    if (keysPressed["w"]) {
+        camera.translateZ(-moveStep); // Move forward
+    }
+    if (keysPressed["s"]) {
+        camera.translateZ(moveStep); // Move backward
+    }
+    if (keysPressed["a"]) {
+        camera.translateX(-moveStep); // Move left
+    }
+    if (keysPressed["d"]) {
+        camera.translateX(moveStep); // Move right
+    }
+
+    // Ensure controls keep syncing with camera
+    controls.update();
+}
+
 
 // Lights
 function addLigths() {
@@ -324,7 +366,7 @@ function moveCamera() {
 
 }
 
-document.body.onscroll = moveCamera;
+//document.body.onscroll = moveCamera;
 
 const sunContainer = new THREE.Object3D;
 sunContainer.add(sun);
@@ -369,6 +411,34 @@ var saturn_speed = earth_speed * 0.0544827586;
 var uranus_speed = earth_speed * 0.03581454;
 //sun.rotation.x=6;
 
+document.body.addEventListener('click', () => {
+    document.body.requestPointerLock();
+});
+
+document.addEventListener('pointerlockchange', () => {
+    if (document.pointerLockElement) {
+        console.log('Pointer locked!');
+    } else {
+        console.log('Pointer unlocked!');
+    }
+});
+
+let yaw = 0; // Horizontal rotation
+let pitch = 0; // Vertical rotation
+const sensitivity = 0.002; // Adjust for desired speed
+
+document.addEventListener('mousemove', (event) => {
+    if (document.pointerLockElement) {
+        yaw -= event.movementX * sensitivity;
+        pitch -= event.movementY * sensitivity;
+
+        // Clamp pitch to prevent flipping the camera
+        pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, pitch));
+
+        camera.rotation.set(pitch, yaw, 0); // Apply rotations
+    }
+});
+
 
 
 window.addEventListener('resize', onWindowResize, false);
@@ -387,7 +457,8 @@ function animate() {
     requestAnimationFrame(animate);
     //time *= 0.0001;
 
-
+    const delta = clock.getDelta(); // Get time since last frame
+    //updateCameraPosition(delta);
 
     torus.rotation.x += 0.01;
     torus.rotation.y += 0.005;
