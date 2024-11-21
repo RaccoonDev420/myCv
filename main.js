@@ -83,7 +83,7 @@ controls.maxPolarAngle = Math.PI / 2; // Limit vertical rotation
 controls.update();
 
 // Variables for WASD movement
-const movementSpeed = 2; // Adjust speed of movement
+const movementSpeed = 20; // Adjust speed of movement
 const keysPressed = {};
 
 // Add event listeners for key controls
@@ -96,25 +96,6 @@ document.addEventListener("keyup", (event) => {
 });
 
 // Update camera position based on keys pressed
-function updateCameraPosition(delta) {
-    const moveStep = movementSpeed * delta;
-
-    if (keysPressed["w"]) {
-        camera.translateZ(-moveStep); // Move forward
-    }
-    if (keysPressed["s"]) {
-        camera.translateZ(moveStep); // Move backward
-    }
-    if (keysPressed["a"]) {
-        camera.translateX(-moveStep); // Move left
-    }
-    if (keysPressed["d"]) {
-        camera.translateX(moveStep); // Move right
-    }
-
-    // Ensure controls keep syncing with camera
-    controls.update();
-}
 
 
 // Lights
@@ -123,7 +104,7 @@ function addLigths() {
     const light = new THREE.PointLight(0xb1ddf9, 1, 10000); // soft white light
     light.position.set(10, 11, 0);
     const lightHelper = new THREE.PointLightHelper(light);
-    //scene.add(light, lightHelper);
+    scene.add(light, lightHelper);
 
     //AmbientLight
     const ambientLight = new THREE.AmbientLight(0xffffff);
@@ -144,7 +125,7 @@ function addLigths() {
 addLigths();
 
 const gridHelper = new THREE.GridHelper(200, 200);
-
+//scene.add(gridHelper)
 var angles = [0, 0, 0, 0];
 
 function DrawOrbit(radius, smoothness, angle, dt, object, id) {
@@ -411,6 +392,7 @@ var saturn_speed = earth_speed * 0.0544827586;
 var uranus_speed = earth_speed * 0.03581454;
 //sun.rotation.x=6;
 
+
 document.body.addEventListener('click', () => {
     document.body.requestPointerLock();
 });
@@ -451,6 +433,25 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 
 }
+function updateCameraPosition(delta) {
+    const moveStep = movementSpeed * delta;
+
+    // Forward/backward
+    if (keysPressed["w"]) {
+        camera.position.add(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(moveStep));
+    }
+    if (keysPressed["s"]) {
+        camera.position.add(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(-moveStep));
+    }
+
+    // Left/right strafing
+    if (keysPressed["a"]) {
+        camera.position.add(camera.getWorldDirection(new THREE.Vector3()).cross(camera.up).normalize().multiplyScalar(-moveStep));
+    }
+    if (keysPressed["d"]) {
+        camera.position.add(camera.getWorldDirection(new THREE.Vector3()).cross(camera.up).normalize().multiplyScalar(moveStep));
+    }
+}
 
 function animate() {
 
@@ -458,7 +459,7 @@ function animate() {
     //time *= 0.0001;
 
     const delta = clock.getDelta(); // Get time since last frame
-    //updateCameraPosition(delta);
+    updateCameraPosition(delta);
 
     torus.rotation.x += 0.01;
     torus.rotation.y += 0.005;
@@ -472,6 +473,9 @@ function animate() {
     jupiter.rotation.y += 0.007;
     saturn.rotation.y += 0.009;
     ring.rotation.z += 0.01;
+
+    salme.rotation.x += 0.01 * mercury_speed;
+    salme.rotation.y += 0.1 * earth_speed;
 
     mercuryContainer.rotation.y += 0.17 * mercury_speed;
     earthContainer.rotation.y += 0.17 * earth_speed;
