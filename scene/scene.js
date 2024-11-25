@@ -72,7 +72,7 @@ const planetTextures = {
     space: assets.spacePicture
 };
 
-const planetContainers = addPlanetsToScene(scene, planetTextures);
+const planetContainers = addPlanetsToScene(scene);
 
 function animate() {
     requestAnimationFrame(animate);
